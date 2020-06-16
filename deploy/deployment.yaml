@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+# deployment名字 和svc 和ingress绑定没关系
+  name: django-web01
+  namespace: default
+spec:
+  replicas: 1
+  # 在定义模板的时候必须定义labels,因为Deployment.spec.selector是必须字段,而他又必须和template.labels对应
+  selector:
+    matchLabels:
+      app: django-web01
+  # template里面定义的内容会应用到下面所有的副本集里面(例如depolyment下的pod),在template.spec.containers里面不能定义labels标签。可以kubectl get pods --show-labels查看
+  template:
+    metadata:
+      labels:
+        app: django-web01
+    spec:
+      containers:
+      # containers名字 和svc 和ingress绑定没关系
+      - name: django-web01
+        #image: harbor.aircourses.com/jiaminxu/django-web01:v1
+        image: harbor.aircourses.com/jiaminxu/django-web01:2.0
+        ports:
+        - name: http
+          containerPort: 8000
+      imagePullSecrets:
+        - name: myregistrykey

@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+# 通过添加下面的annotations 来开启白名单
+# 关闭80强制跳转443 为ingress配置增加注解（annotations）：nginx.ingress.kubernetes.io/ssl-redirect: 'false' 就可以禁止http强制跳转至https
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: "60.191.70.64/29, 192.168.0.0/16, 47.111.185.111, 47.97.113.64, 47.99.246.58, 47.111.170.245, 47.111.247.117, 47.99.244.221, 47.110.144.233, 47.110.144.233, 121.41.103.54, 121.40.186.211, 121.40.16.165, 121.40.16.63, 60.191.70.66, 60.191.70.67"
+    nginx.ingress.kubernetes.io/ssl-redirect: 'false'
+  name: django-web01
+spec:
+  tls:
+   - hosts:
+     - pre-k8s-django.aircourses.com
+     secretName: aircourses
+  rules:
+    - host: pre-k8s-django.aircourses.com
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: django-web01
+            servicePort: 80
